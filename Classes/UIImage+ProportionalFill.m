@@ -93,7 +93,9 @@
 #if __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_4_0
 	CGImageRef sourceImg = nil;
 	if ([UIScreen instancesRespondToSelector:@selector(scale)]) {
-		UIGraphicsBeginImageContextWithOptions(destRect.size, NO, 0.f); // 0.f for scale means "scale for device's main screen".
+		CGImageAlphaInfo alpha = CGImageGetAlphaInfo([self CGImage]);
+		BOOL hasAlpha = (alpha == kCGImageAlphaFirst || alpha == kCGImageAlphaLast || alpha == kCGImageAlphaPremultipliedFirst || alpha == kCGImageAlphaPremultipliedLast);
+		UIGraphicsBeginImageContextWithOptions(destRect.size, !hasAlpha, 0.f); // 0.f for scale means "scale for device's main screen".
 		sourceImg = CGImageCreateWithImageInRect([self CGImage], sourceRect); // cropping happens here.
 		image = [UIImage imageWithCGImage:sourceImg scale:0.0 orientation:self.imageOrientation]; // create cropped UIImage.
 		
