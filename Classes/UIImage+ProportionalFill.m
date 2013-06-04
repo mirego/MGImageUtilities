@@ -114,8 +114,10 @@
 	if (!image) {
 		// Try older method.
 		CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
-		CGContextRef context = CGBitmapContextCreate(NULL, scaledWidth, scaledHeight, 8, (scaledWidth * 4), 
-													 colorSpace, kCGImageAlphaPremultipliedLast);
+		CGImageAlphaInfo alpha = CGImageGetAlphaInfo([self CGImage]);
+		BOOL hasAlpha = (alpha == kCGImageAlphaFirst || alpha == kCGImageAlphaLast || alpha == kCGImageAlphaPremultipliedFirst || alpha == kCGImageAlphaPremultipliedLast);
+		CGContextRef context = CGBitmapContextCreate(NULL, scaledWidth, scaledHeight, 8, (scaledWidth * 4),
+													 colorSpace, hasAlpha ? kCGImageAlphaPremultipliedLast : kCGImageAlphaNoneSkipLast);
 		CGImageRef sourceImg = CGImageCreateWithImageInRect([self CGImage], sourceRect);
 		CGContextDrawImage(context, destRect, sourceImg);
 		CGImageRelease(sourceImg);
